@@ -1,36 +1,175 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CryptoSentinel | Operational Studio</title>
+  <title>CryptoSentinel | Quantitative Trading & Market Arbitrage Studio</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="header">
     <div class="brand">
-      <span class="logo">⚡</span>
+      <div class="logo-box">📈</div>
       <div>
-        <h1>CryptoSentinel</h1>
-        <span class="sub">Real-Time Crypto Arbitrage & Volatility Monitor</span>
+        <h1>CryptoSentinel <span class="badge-v">v2.0.0</span></h1>
+        <span class="sub">Quantitative Order Book Depth, Bellman-Ford Triangular Arbitrage & Volatility Engine</span>
       </div>
     </div>
-    <div class="status-badge">🟢 Operational Active</div>
+    <div class="header-right">
+      <button id="refreshBtn" class="btn-secondary">🔄 Refresh Market Data</button>
+      <div class="status-pill"><span class="dot"></span> MATCHING ENGINE LIVE</div>
+    </div>
   </header>
+
   <main class="main">
-    <div class="card">
-      <h2>Engine Overview</h2>
-      <p>High-frequency cryptocurrency arbitrage scanner, price spread calculator and multi-channel webhook alert engine.</p>
-      <div class="metrics-row" id="metricsRow">
-        <div class="metric"><span class="lbl">STATUS</span><span class="val">HEALTHY</span></div>
-        <div class="metric"><span class="lbl">LATENCY</span><span class="val">1.2 ms</span></div>
-        <div class="metric"><span class="lbl">THROUGHPUT</span><span class="val">1,250 req/s</span></div>
+    <!-- Telemetry Cards -->
+    <section class="telemetry-grid">
+      <div class="stat-card">
+        <span class="stat-label">BTC/USDT MID PRICE</span>
+        <span class="stat-value text-accent" id="statMidPrice">--</span>
+        <span class="stat-sub" id="statSymbol">Real-time market center</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">BID-ASK SPREAD</span>
+        <span class="stat-value" id="statSpread">--</span>
+        <span class="stat-sub" id="statSpreadPct">--% spread percentage</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">BOOK IMBALANCE</span>
+        <span class="stat-value" id="statImbalance">--</span>
+        <span class="stat-sub" id="statImbalanceLabel">Order flow pressure</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">ANNUALIZED VOLATILITY</span>
+        <span class="stat-value text-warning" id="statVolatility">--%</span>
+        <span class="stat-sub">Log returns variance (365d)</span>
+      </div>
+    </section>
+
+    <!-- Triangular Arbitrage Panel -->
+    <section class="panel-card">
+      <div class="panel-header flex-between">
+        <h3>⚡ Triangular Arbitrage Cycle Detector (Bellman-Ford Negative Cycles)</h3>
+        <span class="badge-tag">Taker Fee: 0.075% / leg</span>
+      </div>
+      <div class="arb-container">
+        <div class="arb-controls">
+          <label for="capitalInput">Simulated Capital (USDT):</label>
+          <input type="number" id="capitalInput" value="10000" min="100" step="500">
+          <button id="scanArbBtn" class="btn-primary-inline">Scan Arbitrage Loops</button>
+        </div>
+        <div class="arb-cards-grid" id="arbCardsGrid">
+          <div class="empty-state">Scanning triangular arbitrage routes...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace: Order Book & Slippage Simulator -->
+    <div class="workspace-grid">
+      <!-- Left: Order Book Depth -->
+      <div class="col-orderbook">
+        <div class="panel-card">
+          <div class="panel-header flex-between">
+            <h3>📖 Level 2 (L2) Order Book Depth</h3>
+            <span class="badge-tag" id="bookSymbolBadge">BTC/USDT</span>
+          </div>
+          <div class="orderbook-split">
+            <!-- Bids Column -->
+            <div class="book-half">
+              <div class="book-title text-success">BIDS (Buy Orders)</div>
+              <div class="book-header">
+                <span>Price</span>
+                <span>Size</span>
+              </div>
+              <div class="book-rows" id="bidsList">
+                <div class="empty-state">Loading bids...</div>
+              </div>
+            </div>
+            <!-- Asks Column -->
+            <div class="book-half">
+              <div class="book-title text-danger">ASKS (Sell Orders)</div>
+              <div class="book-header">
+                <span>Price</span>
+                <span>Size</span>
+              </div>
+              <div class="book-rows" id="asksList">
+                <div class="empty-state">Loading asks...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Slippage & Bollinger Bands -->
+      <div class="col-analytics">
+        <!-- Slippage Simulator -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>📉 Market Buy Slippage Estimator</h3>
+          </div>
+          <form id="slippageForm">
+            <div class="form-group">
+              <label for="tradeSizeInput">Order Execution Size (BTC)</label>
+              <input type="number" id="tradeSizeInput" value="2.5" step="0.1" min="0.1" required>
+            </div>
+            <button type="submit" class="btn-primary">Calculate Fill & Slippage</button>
+          </form>
+          <div class="slippage-result" id="slippageResult">
+            <div class="metric-row">
+              <span class="lbl">Best Available Ask:</span>
+              <span class="val" id="slipBestAsk">--</span>
+            </div>
+            <div class="metric-row">
+              <span class="lbl">Average Fill Price:</span>
+              <span class="val" id="slipAvgPrice">--</span>
+            </div>
+            <div class="metric-row">
+              <span class="lbl">Execution Slippage:</span>
+              <span class="val text-danger" id="slipPct">--%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bollinger Bands -->
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3>📊 Bollinger Bands & Volatility Envelope (20 SMA, 2σ)</h3>
+          </div>
+          <div class="bands-container">
+            <div class="band-stat">
+              <span class="lbl">UPPER BAND (+2σ):</span>
+              <span class="val text-danger" id="bandUpper">--</span>
+            </div>
+            <div class="band-stat">
+              <span class="lbl">MIDDLE (20 SMA):</span>
+              <span class="val text-accent" id="bandMiddle">--</span>
+            </div>
+            <div class="band-stat">
+              <span class="lbl">LOWER BAND (-2σ):</span>
+              <span class="val text-success" id="bandLower">--</span>
+            </div>
+            <div class="band-stat">
+              <span class="lbl">BANDWIDTH (%):</span>
+              <span class="val" id="bandWidth">--%</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
+
   <footer class="footer">
-    <p>CryptoSentinel &bull; Autonomously engineered by 7-Agent SDLC Factory for <a href="https://github.com/alinurettin/CryptoSentinel" target="_blank">Ali Nurettin Demir</a></p>
+    <div class="footer-content">
+      <span>CryptoSentinel v2.0.0 &bull; Autonomously engineered by 7-Agent SDLC Software Factory</span>
+      <a href="https://github.com/alinurettin/CryptoSentinel" target="_blank" class="github-link">
+        GitHub: @alinurettin/CryptoSentinel
+      </a>
+    </div>
   </footer>
+
   <script src="app.js"></script>
 </body>
 </html>
