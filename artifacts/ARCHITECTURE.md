@@ -1,4 +1,4 @@
-﻿# ğŸ“ System Architecture Document: CryptoSentinel
+﻿# 📐 System Architecture Document: CryptoSentinel
 - **Project:** CryptoSentinel
 - **Author:** Expert Software Architect
 - **Status:** APPROVED & COMPLETE
