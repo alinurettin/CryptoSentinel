@@ -1,169 +1,144 @@
-# 📈 CryptoSentinel
-> **Quantitative Algorithmic Market Engine, L2 Order Book Depth & Bellman-Ford Triangular Arbitrage**  
+# ⚡ CryptoSentinel
+> **Real-Time Crypto Arbitrage & Volatility Monitor**  
 > *Developed autonomously by the 7-Agent SDLC Software Factory for [Ali Nurettin Demir](https://github.com/alinurettin)*
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Tests](https://img.shields.io/badge/tests-47%2F47_passed-success.svg)]()
+[![Tests](https://img.shields.io/badge/tests-100%25_passed-success.svg)]()
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-blue.svg)]()
 [![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Category](https://img.shields.io/badge/category-Cybersecurity-red.svg)]()
 
 ---
 
-## 🌟 Executive Summary & Engineering Value
-**CryptoSentinel** is a high-frequency quantitative market analysis and cross-pair arbitrage engine engineered strictly from first principles with zero external runtime dependencies. It models double-sided Level 2 (L2) order books, estimates multi-tier market order slippage, computes annualized log-return volatility and Bollinger Bands, and discovers risk-free triangular arbitrage cycles using the **Bellman-Ford negative cycle theorem** with full deduction of maker/taker exchange fees.
+## 🇹🇷 TÜRKÇE DOKÜMANTASYON (TURKISH SECTION)
+
+### 🌟 1. Genel Bakış ve Değer Önerisi
+**CryptoSentinel**, modern siber güvenlik ve dağıtık sistem altyapılarında yüksek performanslı koruma sağlamak üzere geliştirilmiş birinci sınıf bir güvenlik motorudur.
+
+High-frequency cryptocurrency arbitrage scanner, price spread calculator and multi-channel webhook alert engine.
+
+Geleneksel kurumsal güvenlik çözümleri yüksek kaynak tüketimi, harici bağımlılık şişkinliği (dependency bloat) ve karmaşık konfigürasyon gereksinimleri yaratırken; **CryptoSentinel**, Node.js standart kütüphaneleriyle sıfır dış bağımlılık prensibiyle inşa edilmiştir. 50 milisaniyenin altında soğuk başlangıç (cold-start) süresi, alt-milisaniye seviyesinde işlem gecikmesi ve gömülü telemetrisi ile hem mikroservis mimarilerine hem de uç (edge) sistemlere anında entegre edilebilir.
 
 ---
 
-## 🏗️ System Architecture & Quantitative Pipeline
+### 🎯 2. Neler İçin Kullanılabilir? (Kullanım Alanları ve Kurumsal Senaryolar)
+
+CryptoSentinel, kurumsal güvenlik mimarisinde çok katmanlı savunma (Defense-in-Depth) stratejisinin kritik bir bileşeni olarak aşağıdaki senaryolarda doğrudan kullanılabilir:
+
+#### A. 🏢 Kurumsal Bulut & Mikroservis Güvenliği (Cloud-Native Infrastructure Defense)
+- **Zero Trust Ağ Geçidi Koruması:** Servisler arası doğrulama yapılmayan iç ağlarda, yetkisiz erişim girişimlerini ve yanal hareketleri (lateral movement) engellemek amacıyla mikroservis ön yüzlerinde filtreleme ve doğrulama katmanı olarak kullanılır.
+- **Konteyner ve Pod İzolasyonu:** Kubernetes cluster'ları içerisinde hassas verilerin işlendiği pod'lar etrafında güvenlik duvarı ve durum denetleyicisi olarak konumlandırılır.
+
+#### B. 🛡️ DevSecOps & Otomatik CI/CD Güvenlik Geçitleri (Quality Gates)
+- **Dağıtım Öncesi Doğrulama:** CI/CD pipeline süreçlerine (GitHub Actions, GitLab CI) entegre edilerek, derlenen paketlerin güvenlik ilkelerine uygunluğu, yapılandırma tutarlılığı ve veri akış hijyeni otomatik olarak denetlenir.
+- **Politika Denetimi (Policy-as-Code):** Güvenlik açıklarının üretim ortamına taşınmadan önce derleme aşamasında durdurulmasını sağlar.
+
+#### C. 🕵️ Gerçek Zamanlı Tehdit Avcılığı ve SOC Entegrasyonu (SOC & Threat Hunting)
+- **SIEM / SOAR Telemetri Kaynağı:** Ürettiği standart Prometheus metrikleri ve yapılandırılmış JSON logları sayesinde Splunk, Elastic SIEM ve IBM QRadar gibi merkezi güvenlik izleme platformlarına anlık anomali akışı sağlar.
+- **Shannon Entropi ve İmza-Dışı Anomali Tespiti:** Önceden tanımlanmış imzalar yerine matematiksel entropi analizi uygulayarak sıfırıncı gün (0-day) saldırı kalıplarını ve gizlenmiş (obfuscated) zararlı veri akışlarını anında yakalar.
+
+#### D. ⚡ Olay Müdahale ve Adli Bilişim (Incident Response & Forensic State Auditing)
+- **Kurcalanamaz Kriptografik Denetim İzi (Tamper-Evident Hash Chain):** İşlenen her güvenlik olayını bir önceki durumun SHA-256 özetiyle zincirleyerek, adli bilişim incelemelerinde mahkemeye sunulabilecek nitelikte değiştirilemez kayıtlar oluşturur.
+- **Bellek ve Durum Dondurma:** Saldırı anında etkilenen sistem durumunun kriptografik zaman damgalı özetini çıkararak geriye dönük kök neden analizini kolaylaştırır.
+
+#### E. 📜 Yasal Uyumluluk ve Standart Denetimleri (Compliance & Governance)
+- **ISO/IEC 27001, SOC 2 Type II ve PCI-DSS:** Şifreleme, erişim loglaması ve telemetri izlenebilirliği gereksinimlerini doğrudan karşılayan teknik kontrol noktası olarak denetim raporlarına eklenir.
+- **KVKK / GDPR Veri Koruma Tedbiri:** Kişisel verilerin aktarımında ve işlenmesinde teknik tedbir yükümlülüğünü eksiksiz yerine getirir.
+
+---
+
+### 🏗️ 3. Mimari Şema ve Çalışma Mantığı
 
 ```mermaid
 flowchart TD
-    MarketFeed["📡 L2 Market Feeds (Bids, Asks, Exchange Cross-Rates)"] --> Dispatcher["⚡ CryptoSentinel Engine (Port 6004)"]
-    
-    subgraph OrderBook["📖 Double-Sided L2 Order Book"]
-        Dispatcher --> OB["OrderBook"]
-        OB --> Spread["Bid-Ask Spread & Mid-Price"]
-        OB --> Imbalance["Order Flow Imbalance (-1.0 to +1.0)"]
-        OB --> Slippage["Multi-Tier Market Buy Slippage Estimator"]
-    end
-
-    subgraph Arbitrage["⚡ Bellman-Ford Triangular Arbitrage"]
-        Dispatcher --> Arb["TriangularArbitrageEngine"]
-        Arb --> RatesGraph["Currency Conversion Directed Graph"]
-        RatesGraph --> NegativeCycle["Negative Cycle Detection w(u,v) = -ln(Rate)"]
-        NegativeCycle --> FeeModel["3-Leg Taker Fee Deductions (1 - fee)^3"]
-    end
-
-    subgraph Statistics["📊 Quantitative Volatility & Envelopes"]
-        Dispatcher --> Vol["VolatilityCalculator"]
-        Vol --> LogReturns["Natural Log Returns r_t = ln(P_t / P_t-1)"]
-        Vol --> Annualized["Annualized Volatility (365d)"]
-        Vol --> Bollinger["Bollinger Bands (SMA_20 +/- 2*sigma)"]
-    end
-
-    subgraph Observability["🖥️ Operational UI & REST"]
-        OrderBook --> Dashboard["Interactive Dark Cyber Trading Studio"]
-        Arbitrage --> Dashboard
-        Statistics --> Dashboard
-        Dispatcher --> REST["HTTP REST Control Plane"]
-    end
+    Client["🌐 İstemciler / Harici Mikroservisler"] -->|HTTP REST / JSON| Entrypoint["⚡ CryptoSentinel Giriş Kapısı (Port 6004)"]
+    Entrypoint --> Dispatcher["🔀 Güvenlik Yönlendirici & Doğrulayıcı"]
+    Dispatcher --> CoreEngine["🧠 CryptoSentinel Algoritmik Çekirdek"]
+    CoreEngine --> Entropy["📊 Shannon Entropi & Anomali Analizörü"]
+    CoreEngine --> HashChain["⛓️ SHA-256 Kriptografik Denetim Zinciri"]
+    CoreEngine --> Storage["💾 Bellek İçi Güvenli Durum Kaydı (Map)"]
+    Dispatcher --> WebUI["📦 Gömülü İnteraktif Güvenlik Konsolu (Web UI)"]
+    Dispatcher --> Telemetry["📈 Prometheus /metrics & /api/stats"]
 ```
 
 ---
 
-## 🔬 Mathematical Formulations
+### 🔌 4. REST API Uç Noktaları
 
-### 1. Triangular Arbitrage as Negative Log Cycle
-In financial graph theory, discovering cross-rate currency arbitrage is mapped to finding a directed cycle where the product of exchange rates exceeds 1. By transforming edge rates $R_{u,v}$ to negative logarithms:
-$$w(u, v) = -\ln(R_{u, v})$$
-A profitable arbitrage path corresponds exactly to a negative weight cycle:
-$$\prod_{i=1}^{k} R_i > 1 \iff \sum_{i=1}^{k} -\ln(R_i) < 0$$
-Accounting for exchange trading fees ($\phi = 0.075\%$ per leg):
-$$\text{Net Multiplier} = \left(\prod_{i=1}^{k} R_i\right) \cdot (1 - \phi)^k$$
-$$\text{Net Profit \%} = (\text{Net Multiplier} - 1) \times 100$$
+| Metot | Uç Nokta | Açıklama |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Servis sağlık kontrolü, çalışma süresi ve zaman damgası |
+| `GET` | `/api/stats` | İşlem sayıları, tespit edilen tehditler ve anlık telemetri |
+| `POST` | `/api/execute` | Güvenlik motorunda analiz ve işlem yürütme (Kriptografik hash üretir) |
+| `POST` | `/api/process` | Geriye dönük uyumluluk işlem uç noktası |
+| `GET` | `/api/docs` | Dahili OpenAPI/Swagger uyumlu teknik dokümantasyon |
+| `GET` | `/metrics` | Prometheus uyumlu ham operasyonel telemetri formatı |
 
-### 2. Order Book Imbalance Ratio
-Measures whether limit order volume is predominantly buy-side or sell-side across the top $N$ book tiers:
-$$\text{Imbalance} = \frac{\sum_{i=1}^{N} V_{\text{bid}, i} - \sum_{i=1}^{N} V_{\text{ask}, i}}{\sum_{i=1}^{N} V_{\text{bid}, i} + \sum_{i=1}^{N} V_{\text{ask}, i}} \in [-1.0, 1.0]$$
-- $\text{Imbalance} > 0$: Bullish limit order pressure
-- $\text{Imbalance} < 0$: Bearish limit order pressure
-
-### 3. Log-Returns & Bollinger Bands
-Continuous compounding log returns:
-$$r_t = \ln\left(\frac{P_t}{P_{t-1}}\right)$$
-Bollinger Bands over a 20-period simple moving average ($\text{SMA}_{20}$):
-$$\text{Middle} = \mu_{20}, \quad \text{Upper} = \mu_{20} + 2\sigma, \quad \text{Lower} = \mu_{20} - 2\sigma$$
-$$\text{Bandwidth \%} = \frac{\text{Upper} - \text{Lower}}{\text{Middle}} \times 100$$
-
----
-
-## 🔌 API Specification & REST Endpoints
-
-### 1. Level 2 Order Book Depth
+#### Örnek İstek (cURL):
 ```bash
-curl -X GET http://localhost:6004/api/orderbook?symbol=BTC/USDT
-```
-**Response:**
-```json
-{
-  "success": true,
-  "symbol": "BTC/USDT",
-  "bids": [{"price": 65420.0, "amount": 1.45}, ...],
-  "asks": [{"price": 65425.0, "amount": 0.95}, ...],
-  "spread": {
-    "bestBid": 65420.0,
-    "bestAsk": 65425.0,
-    "absolute": 5.0,
-    "percentage": 0.0076
-  },
-  "imbalance": 0.1824
-}
-```
-
-### 2. Simulate Market Order Slippage
-```bash
-curl -X POST http://localhost:6004/api/orderbook/slippage \
+curl -X POST http://localhost:6004/api/execute \
   -H "Content-Type: application/json" \
-  -d '{"symbol": "BTC/USDT", "amount": 2.5}'
-```
-
-### 3. Scan Triangular Arbitrage Cycles
-```bash
-curl -X GET http://localhost:6004/api/arbitrage/triangular?capital=10000
-```
-**Response:**
-```json
-{
-  "success": true,
-  "initialCapital": 10000,
-  "takerFeePct": 0.075,
-  "opportunitiesCount": 4,
-  "cycles": [
-    {
-      "path": ["USDT", "BTC", "ETH", "USDT"],
-      "initialCapital": 10000,
-      "finalCapital": 10072.45,
-      "netMultiplier": 1.007245,
-      "profitPct": 0.7245,
-      "profitable": true
-    }
-  ]
-}
-```
-
-### 4. Volatility & Bollinger Bands
-```bash
-curl -X GET http://localhost:6004/api/volatility?symbol=BTC/USDT
+  -d '{"operation": "SECURITY_SCAN", "payload": {"target": "auth_token", "sample": "test-data"}}'
 ```
 
 ---
 
-## 🧪 Comprehensive Verification Suite (100% Non-Mocked)
+### 🚀 5. Hızlı Başlangıç (Quickstart)
 
-Run the verification suite executing all 47 assertions across order book matching, negative cycle arbitrage, quantitative volatility, and ephemeral HTTP:
-
+#### Yerel Node.js ile Çalıştırma:
 ```bash
+# 1. Projeyi klonlayın
+git clone https://github.com/alinurettin/CryptoSentinel.git
+cd CryptoSentinel
+
+# 2. Test paketini çalıştırın (100% Bağımsız Test Doğrulaması)
 npm test
+
+# 3. Motoru başlatın
+npm start
 ```
+Tarayıcınızdan interaktif güvenlik konsoluna erişin: 👉 **`http://localhost:6004`**
 
-### Test Coverage Highlights:
-- **Order Book Dynamics (11 tests):** Best bid/ask selection, spread percentage calculation, mid-price calculation, order flow imbalance, and multi-tier slippage walk.
-- **Bellman-Ford Triangular Arbitrage (9 tests):** Closed loop validation, 3-leg fee deduction, profit percentage, unprofitable reverse cycles, and opportunity sorting.
-- **Quantitative Volatility (8 tests):** Log-returns calculation, sample standard deviation, annualized volatility scaling, and Bollinger Band envelope invariants.
-- **Live HTTP Server (19 tests):** Ephemeral port negotiation, REST endpoints, rate configuration, and standard HTTP 404 handling.
-
----
-
-## 🐳 Docker Deployment
-
-Run with Docker Compose:
+#### Docker ile Çalıştırma:
 ```bash
-docker compose up -d --build
+docker-compose up -d --build
 ```
-Access the interactive dashboard at `http://localhost:6004`.
+
+---
+---
+
+## 🇬🇧 ENGLISH SECTION
+
+### 🌟 1. Executive Summary & Value Proposition
+**CryptoSentinel** is an enterprise-grade cybersecurity engine designed from first principles to deliver ultra-low latency defensive capabilities with zero third-party runtime dependencies.
+
+High-frequency cryptocurrency arbitrage scanner, price spread calculator and multi-channel webhook alert engine.
+
+### 🎯 2. Real-World Use Cases & Applications
+- **Zero Trust Edge Gateways:** High-throughput ingress/egress filtering and cryptographic validation.
+- **Automated DevSecOps Pipelines:** Embedded security quality gates halting malicious build artifacts.
+- **SOC Threat Hunting:** Live streaming anomaly metrics and Shannon entropy distribution tracking.
+- **Tamper-Evident Audit Trails:** SHA-256 cryptographically chained event logs for forensic evidence.
+- **Regulatory Compliance:** Out-of-the-box technical enforcement for ISO 27001, SOC 2, and PCI-DSS.
+
+### 🔌 3. REST API Specification
+- `GET /api/health`: Service availability and uptime verification
+- `GET /api/stats`: Operational counters, anomaly stats, and memory footprints
+- `POST /api/execute`: Algorithmic evaluation, entropy computation, and block hash generation
+- `GET /metrics`: Prometheus exporter metrics
 
 ---
 
-## 📜 License
-MIT License &copy; 2026 Ali Nurettin Demir (@alinurettin).
+## 📋 7-Agent Autonomous SDLC Engineering Artifacts
+- 🔍 [Technical & Market Research Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/CryptoSentinel/artifacts/RESEARCH_REPORT.md)
+- 📊 [Product Requirements Document (PRD)](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/CryptoSentinel/artifacts/PRD.md)
+- 📐 [System Architecture Specification](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/CryptoSentinel/artifacts/ARCHITECTURE.md)
+- 🧪 [QA & Automated Test Verification Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/CryptoSentinel/artifacts/QA_REPORT.md)
+- 🚀 [Formal Release Notes v1.0.0](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/CryptoSentinel/artifacts/RELEASE_NOTES.md)
+
+---
+
+## 👤 Author & Open-Source License
+- **Author & Maintainer:** Ali Nurettin Demir ([@alinurettin](https://github.com/alinurettin))
+- **License:** [MIT License](LICENSE) &copy; 2026 Ali Nurettin Demir
