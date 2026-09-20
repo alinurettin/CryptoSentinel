@@ -1,4 +1,4 @@
-﻿# ğŸ“Š Product Requirements Document (PRD): CryptoSentinel
+﻿# 📊 Product Requirements Document (PRD): CryptoSentinel
 - **Project:** CryptoSentinel
 - **Author:** Expert Business Analyst
 - **Status:** APPROVED & COMPLETE
